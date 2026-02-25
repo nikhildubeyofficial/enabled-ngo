@@ -62,11 +62,11 @@ export default function BeADonorPage() {
           {/* Hero */}
           <div className="relative h-[400px] sm:h-[450px] md:h-[500px] lg:h-[550px] flex items-center justify-center overflow-hidden">
             <img
-              src="/BG.jpg"
+              src="/images/image.png"
               alt="Hero Background"
               className="absolute inset-0 w-full h-full object-cover object-center"
             />
-            <div className="absolute inset-0 bg-black opacity-50" />
+            {/* <div className="absolute inset-0 bg-black opacity-50" />
             <div className="relative z-10 text-center text-white px-4 max-w-4xl mx-auto">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6">
                 KUAT BERSAMA ENABLED.
@@ -74,7 +74,7 @@ export default function BeADonorPage() {
               <p className="text-sm sm:text-base md:text-lg lg:text-xl leading-relaxed">
                 Setiap anak berhak mendapatkan kesempatan yang sama untuk meraih impian mereka. Bersama kita bisa memberikan harapan dan dukungan bagi anak-anak yang membutuhkan. Bantuan Anda dapat mengubah hidup mereka dan membuka jalan menuju masa depan yang lebih cerah.
               </p>
-            </div>
+            </div> */}
           </div>
 
           {/* Listing */}
