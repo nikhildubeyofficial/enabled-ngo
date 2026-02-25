@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/context/AuthContext';
 
 export default function CartPage() {
   const router = useRouter();
   const [cartItems, setCartItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { user } = useAuth();
 
   // Mock data for initial development if backend is not available
   const mockItems = [
@@ -161,18 +163,36 @@ export default function CartPage() {
                       <span className="text-gray-900">{formatCurrency(subtotal)}</span>
                     </div>
                   </div>
-                  <button
-                    onClick={() => {
-                      if (cartItems.length === 0) {
-                        alert("Your cart is empty. Please add items before proceeding to checkout.");
-                      } else {
-                        router.push('/billing');
-                      }
-                    }}
-                    className="mt-8 w-full bg-[#3455b9] hover:bg-blue-800 text-white font-bold py-3 rounded-lg shadow-md transition-all active:scale-95"
-                  >
-                    Proceed to checkout
-                  </button>
+                  {user ? (
+                    <button
+                      onClick={() => {
+                        if (cartItems.length === 0) {
+                          alert("Your cart is empty. Please add items before proceeding to checkout.");
+                        } else {
+                          router.push('/billing');
+                        }
+                      }}
+                      className="mt-8 w-full bg-[#3455b9] hover:bg-blue-800 text-white font-bold py-3 rounded-lg shadow-md transition-all active:scale-95"
+                    >
+                      Proceed to checkout
+                    </button>
+                  ) : (
+                    <div className="mt-8 space-y-4">
+                      <p className="text-sm text-center text-gray-500 font-medium">Please login or signup to continue to checkout</p>
+                      <button
+                        onClick={() => router.push('/login')}
+                        className="w-full bg-[#3455b9] hover:bg-blue-800 text-white font-bold py-3 rounded-lg shadow-md transition-all active:scale-95"
+                      >
+                        Login to Checkout
+                      </button>
+                      <button
+                        onClick={() => router.push('/signup')}
+                        className="w-full bg-white text-[#3455b9] border-2 border-[#3455b9] hover:bg-blue-50 font-bold py-3 rounded-lg shadow-md transition-all active:scale-95"
+                      >
+                        Create Account
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

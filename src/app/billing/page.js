@@ -30,7 +30,6 @@ export default function BillingPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Prepare the address structure as expected by original backend
         const address = {
             fullName: formData.fullName,
             phone: formData.phone,
@@ -42,11 +41,23 @@ export default function BillingPage() {
             country: "Indonesia"
         };
 
-        console.log("Placing order with address:", address);
+        try {
+            const res = await fetch('/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address })
+            });
 
-        // Mock success for now
-        alert("✅ Order placed successfully! (Note: Backend sync will be implemented once Firebase is configured)");
-        router.push('/orders');
+            if (res.ok) {
+                alert("✅ Order placed successfully!");
+                router.push('/orders');
+            } else {
+                alert("❌ Failed to place order. Please try again.");
+            }
+        } catch (error) {
+            console.error("Order error:", error);
+            alert("❌ An error occurred while placing your order.");
+        }
     };
 
     const inputClasses = "w-full p-3 rounded bg-[#f5f5f5] border border-transparent focus:border-[#3455b9] focus:bg-white outline-none transition-all";

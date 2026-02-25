@@ -3,82 +3,99 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
 export default function LoginPage() {
-    const [errorMsg, setErrorMsg] = useState("");
+    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [errorMsg, setErrorMsg] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter();
+    const { login } = useAuth();
 
-    const handleLogin = (e) => {
-        e.preventDefault();
-        // Firebase login logic omitted
-        router.push('/');
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleGoogleLogin = () => {
-        // Google popup login omitted
-        router.push('/');
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setErrorMsg('');
+        try {
+            const result = await login(formData.email, formData.password);
+            if (result.success) {
+                router.push('/');
+            } else {
+                setErrorMsg('Invalid email or password.');
+            }
+        } catch (err) {
+            setErrorMsg('An error occurred. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
-        <div className="flex justify-center items-center min-h-[calc(100vh-200px)] bg-gray-50 font-inter">
-            <div className="w-full max-w-sm p-6 border border-gray-300 rounded-lg bg-white sm:shadow-sm">
-                <h2 className="text-center text-2xl font-semibold mb-6">Log In</h2>
-                <form onSubmit={handleLogin} className="flex flex-col gap-4">
-                    <div>
-                        <label htmlFor="email" className="text-sm text-gray-600 block">
-                            Email <span className="text-red-400 text-md">*</span>
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            placeholder="Email"
-                            name="email"
-                            className="w-full p-3 mt-1 rounded bg-gray-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            required
-                        />
+        <div className="flex flex-col min-h-screen font-inter">
+            <Navbar />
+            <main className="flex-grow flex justify-center items-center bg-gray-50 py-12 px-4">
+                <div className="w-full max-w-sm p-8 border border-gray-200 rounded-2xl bg-white shadow-sm">
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-black text-gray-900">Welcome back</h1>
+                        <p className="text-gray-500 text-sm mt-1">Log in to your Enabled account</p>
                     </div>
-                    <div>
-                        <label htmlFor="password" className="text-sm text-gray-600 block">
-                            Password <span className="text-red-400 text-md">*</span>
-                        </label>
-                        <input
-                            type="password"
-                            id="password"
-                            placeholder="Password"
-                            name="password"
-                            className="w-full p-3 mt-1 rounded bg-gray-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            required
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className="w-full py-2.5 bg-[#3455b9] text-white rounded hover:bg-blue-800 transition disabled:opacity-60"
-                    >
-                        {isLoading ? "Logging in..." : "Log In"}
-                    </button>
-                </form>
-                {errorMsg && (
-                    <p className="text-red-500 text-center mt-4 text-sm font-medium">{errorMsg}</p>
-                )}
-                <div className="text-center mt-5">
-                    <p className="mb-4 text-gray-600">or Log in with</p>
-                    <button
-                        onClick={handleGoogleLogin}
-                        disabled={isLoading}
-                        className="w-full bg-[#db4444] text-white py-2 rounded hover:bg-red-600 transition"
-                    >
-                        Login with Google
-                    </button>
+                    <form onSubmit={handleLogin} className="flex flex-col gap-4">
+                        <div>
+                            <label htmlFor="email" className="text-sm font-bold text-gray-600 block mb-1">
+                                Email <span className="text-red-400">*</span>
+                            </label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="you@example.com"
+                                value={formData.email}
+                                onChange={handleChange}
+                                className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#f0312f] focus:border-[#f0312f] transition-all font-medium"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="text-sm font-bold text-gray-600 block mb-1">
+                                Password <span className="text-red-400">*</span>
+                            </label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="••••••••"
+                                value={formData.password}
+                                onChange={handleChange}
+                                className="w-full p-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#f0312f] focus:border-[#f0312f] transition-all font-medium"
+                                required
+                            />
+                        </div>
+                        {errorMsg && (
+                            <p className="text-red-500 text-sm font-medium bg-red-50 p-3 rounded-xl">{errorMsg}</p>
+                        )}
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full py-3 bg-[#f0312f] text-white rounded-xl hover:bg-red-700 transition font-bold shadow-lg shadow-red-100 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+                        >
+                            {isLoading ? 'Logging in...' : 'Log In'}
+                        </button>
+                    </form>
+                    <p className="text-center mt-6 text-sm text-gray-500">
+                        Don&apos;t have an account?{' '}
+                        <Link href="/signup" className="text-[#f0312f] font-bold hover:underline">
+                            Sign Up
+                        </Link>
+                    </p>
                 </div>
-                <p className="text-center mt-6 text-sm">
-                    Don't have an account?{" "}
-                    <Link href="/signup" className="text-blue-500 hover:underline">
-                        Sign Up
-                    </Link>
-                </p>
-            </div>
+            </main>
+            <Footer />
         </div>
     );
 }

@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
+    const { user, logout } = useAuth();
 
     const handleNavbarToggle = () => {
         setIsOpen(!isOpen);
@@ -49,9 +51,18 @@ export default function Navbar() {
                     <Link href="/cart" className="hover:underline">
                         Cart
                     </Link>
-                    <button className="bg-white text-[#F0312F] px-4 py-2 rounded hover:bg-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" onClick={handleSignupLogin}>
-                        Signup / Login
-                    </button>
+                    {user ? (
+                        <div className="flex items-center gap-4">
+                            <Link href="/profile" className="flex items-center gap-2 bg-white text-[#F0312F] px-4 py-2 rounded font-bold transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+                                👤 {user.name}
+                            </Link>
+                            <button onClick={logout} className="text-white hover:underline transition-all">Logout</button>
+                        </div>
+                    ) : (
+                        <button className="bg-white text-[#F0312F] px-4 py-2 rounded hover:bg-gray-100 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg" onClick={handleSignupLogin}>
+                            Signup / Login
+                        </button>
+                    )}
                 </div>
                 <button className="md:hidden" onClick={handleNavbarToggle}>
                     <svg

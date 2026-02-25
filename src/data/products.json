@@ -1,0 +1,51 @@
+[
+    {
+        "id": "1",
+        "name": "Pediatric Tracheostomy Care Booklet",
+        "price": 150000,
+        "description": "Comprehensive guide for parents on how to care for children with tracheostomy.",
+        "category": "Education",
+        "image": "/DonationDistributionInsta/C5dUfGfy1uS/2024-04-07_11-11-55_UTC_2.webp",
+        "status": "Available",
+        "inStock": true,
+        "pdfFile": "https://drive.google.com/file/d/1LKwZJw3-zQR8ZxP2AkPW2kMaBgAvf2HK/view?usp=sharing",
+        "features": [
+            "Bilingual (Bahasa & English)",
+            "Parent-Contributed",
+            "Comprehensive Care Guide",
+            "Free Download"
+        ]
+    },
+    {
+        "id": "2",
+        "name": "Replacement Cannula",
+        "price": 450000,
+        "description": "Standard size replacement cannula for pediatric tracheostomy tubes.",
+        "category": "Medical Supplies",
+        "image": "/DonationDistributionInsta/C78-H1dSMwZ/2024-06-08_11-14-59_UTC_10.webp",
+        "status": "Available",
+        "inStock": true,
+        "pdfFile": "",
+        "features": [
+            "Standard Size",
+            "Medical Grade",
+            "Pediatric Safe"
+        ]
+    },
+    {
+        "id": "1772000836856",
+        "name": "Sterimar Nose Hygiene",
+        "price": 200,
+        "category": "Medical Supplies",
+        "status": "Available",
+        "image": "/Girly.png",
+        "description": "Isotonic saline solution for gentle nasal hygiene and daily nose care.",
+        "inStock": true,
+        "pdfFile": "",
+        "features": [
+            "Isotonic Saline",
+            "Gentle Formula",
+            "Suitable for Children"
+        ]
+    }
+]

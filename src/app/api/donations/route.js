@@ -1,9 +1,9 @@
-import { getProducts } from '@/lib/db';
+import { getDonations } from '@/lib/db';
 
 export async function GET() {
     try {
-        const products = await getProducts();
-        return new Response(JSON.stringify(products), {
+        const donations = await getDonations();
+        return new Response(JSON.stringify(donations), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
         });

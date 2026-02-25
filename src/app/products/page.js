@@ -160,12 +160,36 @@ export default function ProductsPage() {
                           {product.description && (
                             <p className="text-gray-500 text-sm line-clamp-2">{product.description}</p>
                           )}
-                          <button
-                            className="mt-auto w-full bg-[#f0312f] text-white py-2 rounded-md hover:bg-red-700 transition font-medium"
-                            onClick={() => handleAddToCart(product)}
-                          >
-                            Add to Cart
-                          </button>
+
+                          {/* Features Preview */}
+                          {product.features && product.features.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {product.features.slice(0, 2).map((feature, i) => (
+                                <span key={i} className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-medium">
+                                  {feature}
+                                </span>
+                              ))}
+                              {product.features.length > 2 && <span className="text-[10px] text-gray-400">+{product.features.length - 2} more</span>}
+                            </div>
+                          )}
+
+                          <div className="mt-auto space-y-2">
+                            <button
+                              className="w-full bg-[#f0312f] text-white py-2 rounded-md hover:bg-red-700 transition font-bold text-sm"
+                              onClick={() => handleAddToCart(product)}
+                            >
+                              Add to Cart
+                            </button>
+
+                            {product.pdfFile && (
+                              <button
+                                className="w-full bg-white text-[#3455b9] border-2 border-[#3455b9] py-2 rounded-md hover:bg-blue-50 transition font-black text-xs flex items-center justify-center gap-2"
+                                onClick={() => window.open(product.pdfFile, '_blank')}
+                              >
+                                <span>📄</span> DOWNLOAD PDF
+                              </button>
+                            )}
+                          </div>
                         </div>
                       </div>
                     ))}
