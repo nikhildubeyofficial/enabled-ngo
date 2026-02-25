@@ -7,8 +7,8 @@ import Footer from '@/components/Footer';
 // These are the official PDF links from the enabled.ngo site
 // They link to Google Drive hosted PDFs
 const BOOKLET_PDFS = {
-  bahasa: 'https://drive.google.com/file/d/1_FMRifDCPTM1goCvHjCa_kqf3f_hEqoD/view?usp=sharing',
-  english: 'https://drive.google.com/file/d/1LKwZJw3-zQR8ZxP2AkPW2kMaBgAvf2HK/view?usp=sharing',
+  bahasa: '/pdf/bahasa_version.pdf',
+  english: '/pdf/english_version.pdf',
 };
 
 export default function PediatricCareBookletPage() {

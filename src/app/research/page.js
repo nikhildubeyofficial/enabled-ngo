@@ -37,6 +37,14 @@ export default function Page() {
           alert(`"${title}" has been added to your cart!`);
         } else if (text === 'Get In Touch' || text === 'Contact Us') {
           window.open('https://wa.me/6287784629666', '_blank', 'noopener,noreferrer');
+        } else if (text === 'Download PDF') {
+          const card = btn.closest('.bg-white');
+          const title = card?.querySelector('h3')?.innerText?.trim();
+          if (title?.includes('Urban vs Rural')) {
+            window.open('/pdf/journal1.pdf', '_blank');
+          } else if (title?.includes('Exploring Coping Strategies')) {
+            window.open('/pdf/journal2.pdf', '_blank');
+          }
         }
       }
     };
