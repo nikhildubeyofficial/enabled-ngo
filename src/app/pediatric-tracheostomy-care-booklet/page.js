@@ -64,7 +64,7 @@ export default function PediatricCareBookletPage() {
                   </svg>
                   <span>Download English Version</span>
                 </button>
-                <p className="text-xs text-gray-400 text-center pt-1">Opens in Google Drive — free to download</p>
+                <p className="text-xs text-gray-400 text-center pt-1">Downloads directly — free to access</p>
               </div>
             </div>
 
