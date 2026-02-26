@@ -27,15 +27,20 @@ export async function POST(req) {
         const orderData = await req.json();
         const orders = await getOrders();
 
+        // Standardized Order Schema
         const newOrder = {
             _id: `ORD-${Date.now()}`,
+            id: `ORD-${Date.now()}`, // Keep both for safety
             customer: orderData.address.fullName,
             email: orderData.address.email,
-            totalPrice: orderData.total,
+            totalPrice: orderData.totalPrice || orderData.total || 0,
             status: 'Processing',
             createdAt: new Date().toISOString(),
-            address: orderData.address,
-            products: orderData.items || []
+            address: {
+                ...orderData.address,
+                email: orderData.address.email || orderData.email // Fallback
+            },
+            products: orderData.products || orderData.items || []
         };
 
         orders.push(newOrder);
@@ -52,4 +57,5 @@ export async function POST(req) {
         });
     }
 }
+
 

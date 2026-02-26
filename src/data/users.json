@@ -19,5 +19,12 @@
     "email": "testuser_unique@example.com",
     "password": "Password123!",
     "role": "user"
+  },
+  {
+    "id": "u-1772046524786",
+    "name": "Integrity Tester",
+    "email": "user_integrity_test@example.com",
+    "password": "password123",
+    "role": "user"
   }
 ]

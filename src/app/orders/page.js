@@ -100,11 +100,11 @@ export default function OrdersPage() {
                                                     {order.address?.fullName || "Order Items"}
                                                 </h3>
                                                 <p className="text-gray-600 text-sm mb-2">
-                                                    {order.products.map(p => p.name).join(", ")}
+                                                    {(order.products || order.items || []).map(p => p.name).join(", ")}
                                                 </p>
                                                 <div className="flex gap-4 text-sm text-gray-500">
-                                                    <span>Qty: {order.products.reduce((acc, p) => acc + p.quantity, 0)}</span>
-                                                    <span>Total: {formatCurrency(order.totalPrice)}</span>
+                                                    <span>Qty: {(order.products || order.items || []).reduce((acc, p) => acc + (p.quantity || 1), 0)}</span>
+                                                    <span>Total: {formatCurrency(order.totalPrice || order.total || 0)}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -135,7 +135,7 @@ export default function OrdersPage() {
                                 <h3 className="text-2xl font-bold mb-6 text-gray-800">Order Details</h3>
 
                                 <div className="space-y-4 mb-8">
-                                    {selectedOrder.products.map((item, idx) => (
+                                    {(selectedOrder.products || selectedOrder.items || []).map((item, idx) => (
                                         <div key={idx} className="flex items-center gap-4 border border-gray-100 rounded-xl p-4 shadow-sm bg-gray-50">
                                             <img
                                                 src={item.image || "/placeholder.jpg"}
@@ -144,10 +144,10 @@ export default function OrdersPage() {
                                             />
                                             <div className="flex-1">
                                                 <p className="font-bold text-gray-800">{item.name}</p>
-                                                <p className="text-sm text-gray-500">{item.quantity} x {formatCurrency(item.price)}</p>
+                                                <p className="text-sm text-gray-500">{item.quantity || 1} x {formatCurrency(item.price || 0)}</p>
                                             </div>
                                             <div className="text-right">
-                                                <p className="font-bold text-gray-800">{formatCurrency(item.price * item.quantity)}</p>
+                                                <p className="font-bold text-gray-800">{formatCurrency((item.price || 0) * (item.quantity || 1))}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -155,7 +155,7 @@ export default function OrdersPage() {
 
                                 <div className="flex justify-between items-center text-xl font-black text-gray-900 border-t pt-4 mb-8">
                                     <span>Total Price</span>
-                                    <span>{formatCurrency(selectedOrder.totalPrice)}</span>
+                                    <span>{formatCurrency(selectedOrder.totalPrice || selectedOrder.total || 0)}</span>
                                 </div>
 
                                 <div className="border-t pt-6 bg-gray-50 -mx-6 px-6 -mb-6 rounded-b-2xl">

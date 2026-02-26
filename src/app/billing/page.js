@@ -62,8 +62,8 @@ export default function BillingPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     address,
-                    items: cartItems,
-                    total: cartTotal
+                    products: cartItems, // Standardized field name
+                    totalPrice: cartTotal // Standardized field name
                 })
             });
 

@@ -6,6 +6,7 @@ const CartContext = createContext();
 
 export function CartProvider({ children }) {
     const [cartItems, setCartItems] = useState([]);
+    const [isInitialized, setIsInitialized] = useState(false);
 
     // Load cart from localStorage on mount
     useEffect(() => {
@@ -17,12 +18,15 @@ export function CartProvider({ children }) {
                 console.error('Failed to parse cart:', e);
             }
         }
+        setIsInitialized(true);
     }, []);
 
-    // Sync cart to localStorage on change
+    // Sync cart to localStorage on change, but only AFTER initialization
     useEffect(() => {
-        localStorage.setItem('enabled_cart', JSON.stringify(cartItems));
-    }, [cartItems]);
+        if (isInitialized) {
+            localStorage.setItem('enabled_cart', JSON.stringify(cartItems));
+        }
+    }, [cartItems, isInitialized]);
 
     const addToCart = (product) => {
         // Normalize MongoDB _id → id so deduplication always works
