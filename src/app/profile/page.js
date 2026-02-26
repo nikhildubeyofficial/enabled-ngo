@@ -5,31 +5,24 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ProfilePage() {
     const router = useRouter();
-    const [user, setUser] = useState(null);
+    const { user, loading, logout } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Mock user data since Firebase is not yet connected
-        const mockUser = {
-            displayName: "Guest User",
-            email: "guest@example.com"
-        };
-
-        // Simulate checking auth state
-        const timer = setTimeout(() => {
-            setUser(mockUser);
+        if (!loading) {
             setIsLoading(false);
-        }, 500);
-
-        return () => clearTimeout(timer);
-    }, []);
+            if (!user) {
+                // Not forcing redirect, user might want to see the login prompt
+            }
+        }
+    }, [user, loading]);
 
     const handleLogout = () => {
-        // In real app, call firebase.signOut()
-        alert("Logging out...");
+        logout();
         router.push('/login');
     };
 
@@ -42,7 +35,7 @@ export default function ProfilePage() {
                         <div className="flex items-center justify-between border-b pb-4">
                             <h2 className="text-2xl font-bold text-gray-800 tracking-tight">Profile</h2>
                             {user && <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
-                                {user.displayName ? user.displayName[0] : 'U'}
+                                {user.name ? user.name[0] : 'U'}
                             </div>}
                         </div>
 
@@ -58,7 +51,7 @@ export default function ProfilePage() {
                                 <div className="group">
                                     <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Full Name</p>
                                     <p className="text-lg text-gray-800 font-medium group-hover:text-blue-600 transition-colors">
-                                        {user.displayName || "N/A"}
+                                        {user.name || "N/A"}
                                     </p>
                                 </div>
 

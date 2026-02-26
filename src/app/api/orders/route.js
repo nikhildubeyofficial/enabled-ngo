@@ -27,19 +27,23 @@ export async function POST(req) {
         const orderData = await req.json();
         const orders = await getOrders();
 
+        if (!orderData.userId && !orderData.address?.email) {
+            return new Response(JSON.stringify({ error: "Missing user identification" }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
         // Standardized Order Schema
         const newOrder = {
-            _id: `ORD-${Date.now()}`,
-            id: `ORD-${Date.now()}`, // Keep both for safety
+            id: `ORD-${Date.now()}`,
+            userId: orderData.userId || null,
             customer: orderData.address.fullName,
             email: orderData.address.email,
             totalPrice: orderData.totalPrice || orderData.total || 0,
             status: 'Processing',
             createdAt: new Date().toISOString(),
-            address: {
-                ...orderData.address,
-                email: orderData.address.email || orderData.email // Fallback
-            },
+            address: orderData.address,
             products: orderData.products || orderData.items || []
         };
 

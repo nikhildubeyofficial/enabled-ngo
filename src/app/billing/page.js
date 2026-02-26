@@ -45,6 +45,12 @@ export default function BillingPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        if (!user) {
+            alert("Please log in to place an order.");
+            router.push('/login');
+            return;
+        }
+
         const address = {
             fullName: formData.fullName,
             phone: formData.phone,
@@ -61,9 +67,10 @@ export default function BillingPage() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
+                    userId: user.id || user._id, // Secure attribution
                     address,
-                    products: cartItems, // Standardized field name
-                    totalPrice: cartTotal // Standardized field name
+                    products: cartItems,
+                    totalPrice: cartTotal
                 })
             });
 
@@ -72,7 +79,8 @@ export default function BillingPage() {
                 clearCart();
                 router.push('/orders');
             } else {
-                alert("❌ Failed to place order. Please try again.");
+                const data = await res.json();
+                alert(`❌ Error: ${data.error || "Failed to place order"}`);
             }
         } catch (error) {
             console.error("Order error:", error);

@@ -8,27 +8,51 @@ export function CartProvider({ children }) {
     const [cartItems, setCartItems] = useState([]);
     const [isInitialized, setIsInitialized] = useState(false);
 
-    // Load cart from localStorage on mount
+    // Key depends on the logged-in user
+    const [cartKey, setCartKey] = useState('enabled_cart_guest');
+
+    // Update cart key when user changes
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            const savedCart = localStorage.getItem('enabled_cart');
+            const savedUser = localStorage.getItem('enabled_user');
+            if (savedUser) {
+                try {
+                    const user = JSON.parse(savedUser);
+                    const userId = user.id || user._id;
+                    setCartKey(`enabled_cart_${userId}`);
+                } catch (e) {
+                    setCartKey('enabled_cart_guest');
+                }
+            } else {
+                setCartKey('enabled_cart_guest');
+            }
+        }
+    }, []);
+
+    // Load cart from localStorage when the key changes
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const savedCart = localStorage.getItem(cartKey);
             if (savedCart) {
                 try {
                     setCartItems(JSON.parse(savedCart));
                 } catch (e) {
                     console.error('Failed to parse cart:', e);
+                    setCartItems([]);
                 }
+            } else {
+                setCartItems([]);
             }
             setIsInitialized(true);
         }
-    }, []);
+    }, [cartKey]);
 
-    // Sync cart to localStorage on change, but only AFTER initialization
+    // Sync cart to localStorage on change
     useEffect(() => {
         if (isInitialized) {
-            localStorage.setItem('enabled_cart', JSON.stringify(cartItems));
+            localStorage.setItem(cartKey, JSON.stringify(cartItems));
         }
-    }, [cartItems, isInitialized]);
+    }, [cartItems, isInitialized, cartKey]);
 
     const addToCart = (product) => {
         // Normalize MongoDB _id → id so deduplication always works
