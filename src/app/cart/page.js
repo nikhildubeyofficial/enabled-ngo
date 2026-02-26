@@ -118,21 +118,7 @@ export default function CartPage() {
                 {cartItems.length > 0 && (
                   <div className="space-y-8">
                     {/* Additional Functions Section */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col gap-4">
-                        <h4 className="font-bold text-gray-800 flex items-center gap-2">
-                          🏷️ Have a Coupon?
-                        </h4>
-                        <div className="flex gap-2">
-                          <input
-                            placeholder="Enter Code"
-                            className="flex-1 p-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#f0312f]/20 uppercase font-bold text-center tracking-widest text-sm"
-                          />
-                          <button className="bg-gray-800 text-white px-6 py-3 rounded-xl font-bold hover:bg-black transition-all">
-                            Apply
-                          </button>
-                        </div>
-                      </div>
+                    <div className="grid grid-cols-1 gap-6">
                       <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col gap-4">
                         <h4 className="font-bold text-gray-800 flex items-center gap-2">
                           📝 Order Notes
