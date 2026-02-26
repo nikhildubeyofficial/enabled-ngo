@@ -51,7 +51,8 @@ const TABLE_MAP = {
     'products.json': 'products',
     'orders.json': 'orders',
     'donations.json': 'donations',
-    'donor_registrations.json': 'donor_registrations'
+    'donor_registrations.json': 'donor_registrations',
+    'children.json': 'children'
 };
 
 // Mapping helpers for Supabase (CamelCase to lowercase)
@@ -115,6 +116,23 @@ const FIELD_MAPPINGS = {
             description: item.description
         })
     },
+    'children': {
+        from: (item) => ({
+            ...item,
+            parentsOccupation: item.parentsoccupation || item.parentsOccupation,
+            createdAt: item.createdat || item.createdAt,
+        }),
+        to: (item) => ({
+            id: item.id,
+            name: item.name,
+            age: item.age,
+            domicile: item.domicile,
+            parentsoccupation: item.parentsOccupation || item.parentsoccupation,
+            description: item.description,
+            image: item.image,
+            createdat: item.createdAt || new Date().toISOString(),
+        })
+    },
     'donor_registrations': {
         from: (item) => item,
         to: (item) => ({
@@ -144,7 +162,16 @@ async function doReadData(filename) {
             try {
                 const { data, error } = await supabase.from(table).select('*');
                 if (error) throw error;
-                const result = FIELD_MAPPINGS[table] ? data.map(FIELD_MAPPINGS[table].from) : (data || []);
+                let result = FIELD_MAPPINGS[table] ? (data || []).map(FIELD_MAPPINGS[table].from) : (data || []);
+                // If children table is empty, use local file so be-a-donor and admin show same seeded data
+                if (table === 'children' && (!result || result.length === 0)) {
+                    const filePath = getFilePath(filename);
+                    if (fs.existsSync(filePath)) {
+                        const content = fs.readFileSync(filePath, 'utf8');
+                        const local = JSON.parse(content || '[]');
+                        result = Array.isArray(local) ? local : [];
+                    }
+                }
                 setCached(filename, result);
                 return result;
             } catch (err) {
@@ -239,6 +266,9 @@ export const saveUsers = (data) => writeData('users.json', data);
 
 export const getDonorRegistrations = () => readData('donor_registrations.json');
 export const saveDonorRegistrations = (data) => writeData('donor_registrations.json', data);
+
+export const getChildren = () => readData('children.json');
+export const saveChildren = (data) => writeData('children.json', data);
 
 /** Insert a single user (direct to Supabase when available). */
 export async function insertUser(user) {

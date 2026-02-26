@@ -7,45 +7,6 @@ import Footer from '@/components/Footer';
 import Link from 'next/link';
 import { ChevronLeft, Lightbulb } from 'lucide-react';
 
-const children = [
-    {
-        id: 1,
-        image: 'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=500&h=500',
-        name: 'Ahmad Rizki Pratama',
-        age: 14,
-        domicile: 'Jakarta Selatan, DKI Jakarta',
-        parentsOccupation: 'Ibu bekerja sebagai pedagang kecil, Ayah sebagai buruh harian',
-        description: 'Ahmad adalah anak yang ceria dan aktif di sekolah. Ia memiliki minat besar dalam bidang matematika dan sains. Keluarganya tinggal di rumah sederhana dan membutuhkan bantuan untuk biaya pendidikan dan kebutuhan sehari-hari. Ahmad sangat berharap dapat melanjutkan pendidikan ke jenjang yang lebih tinggi.'
-    },
-    {
-        id: 2,
-        image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=500&h=500',
-        name: 'Siti Nurhaliza',
-        age: 12,
-        domicile: 'Bandung, Jawa Barat',
-        parentsOccupation: 'Ibu sebagai penjahit, Ayah sudah meninggal',
-        description: 'Siti adalah anak perempuan yang rajin dan berbakat dalam seni. Ia suka menggambar dan membaca buku. Setelah ayahnya meninggal, ibunya bekerja keras sebagai penjahit untuk menghidupi keluarga. Siti membutuhkan dukungan untuk biaya sekolah dan perlengkapan belajar agar dapat terus mengembangkan bakatnya.'
-    },
-    {
-        id: 3,
-        image: 'https://images.unsplash.com/photo-1605713288610-00c1c630ca1e?q=80&w=687&auto=format&fit=crop',
-        name: 'Budi Santoso',
-        age: 15,
-        domicile: 'Surabaya, Jawa Timur',
-        parentsOccupation: 'Ibu sebagai pemulung, Ayah sebagai tukang ojek',
-        description: 'Budi adalah anak yang tekun dan memiliki semangat belajar yang tinggi. Meskipun kondisi ekonomi keluarganya terbatas, ia tidak pernah menyerah untuk mengejar cita-citanya menjadi dokter. Ia aktif dalam kegiatan sekolah dan selalu membantu orang tuanya setelah pulang sekolah. Budi membutuhkan bantuan untuk biaya pendidikan dan kebutuhan kesehatan.'
-    },
-    {
-        id: 4,
-        image: 'https://images.unsplash.com/photo-1607453998774-d533f65dac99?q=80&w=687&auto=format&fit=crop',
-        name: 'Putri Ayu Lestari',
-        age: 13,
-        domicile: 'Yogyakarta, DI Yogyakarta',
-        parentsOccupation: 'Ibu sebagai pembantu rumah tangga, Ayah sebagai tukang bangunan',
-        description: 'Putri adalah anak yang cerdas dan memiliki kepedulian tinggi terhadap sesama. Ia sering membantu teman-temannya yang kesulitan dalam belajar. Keluarganya tinggal di daerah pinggiran kota dengan kondisi rumah yang sederhana. Putri sangat membutuhkan dukungan untuk melanjutkan pendidikannya dan mewujudukan impiannya menjadi guru.'
-    }
-];
-
 const DONATION_AMOUNTS = [
     { label: 'Rp 50.000', value: 50000 },
     { label: 'Rp 100.000', value: 100000 },
@@ -62,9 +23,10 @@ function formatRupiah(amount) {
 export default function DonatePage() {
     const router = useRouter();
     const params = useParams();
-    const childId = parseInt(params.id);
-    const child = children.find(c => c.id === childId);
+    const childId = params.id;
 
+    const [child, setChild] = useState(null);
+    const [childLoading, setChildLoading] = useState(true);
     const [selectedAmount, setSelectedAmount] = useState(0);
     const [customAmount, setCustomAmount] = useState('');
     const [duration, setDuration] = useState('');
@@ -74,9 +36,28 @@ export default function DonatePage() {
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
-        if (!child) router.push('/be-a-donor');
-    }, [child, router]);
+        fetch('/api/children')
+            .then((r) => r.json())
+            .then((data) => {
+                const found = Array.isArray(data)
+                    ? data.find((c) => String(c.id) === String(childId))
+                    : null;
+                if (!found) router.push('/be-a-donor');
+                else setChild(found);
+            })
+            .catch(() => router.push('/be-a-donor'))
+            .finally(() => setChildLoading(false));
+    }, [childId, router]);
 
+    if (childLoading) return (
+        <div className="font-sans flex flex-col min-h-screen font-inter">
+            <Navbar />
+            <main className="flex-grow flex items-center justify-center">
+                <div className="animate-spin h-8 w-8 border-4 border-[#f0312f] border-t-transparent rounded-full" />
+            </main>
+            <Footer />
+        </div>
+    );
     if (!child) return null;
 
     const effectiveAmount = customAmount ? parseInt(customAmount) : selectedAmount;

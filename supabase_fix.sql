@@ -26,6 +26,18 @@ ALTER TABLE donations ADD COLUMN IF NOT EXISTS date TEXT;
 ALTER TABLE donations ADD COLUMN IF NOT EXISTS image TEXT;
 ALTER TABLE donations ADD COLUMN IF NOT EXISTS description TEXT;
 
+-- CHILDREN (managed from admin panel, shown on be-a-donor page)
+CREATE TABLE IF NOT EXISTS children (
+    id TEXT PRIMARY KEY,
+    name TEXT,
+    age INTEGER,
+    domicile TEXT,
+    parentsoccupation TEXT,
+    description TEXT,
+    image TEXT,
+    createdat TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- DONOR REGISTRATIONS (donations submitted from the Be a Donor page)
 CREATE TABLE IF NOT EXISTS donor_registrations (
     id TEXT PRIMARY KEY,
