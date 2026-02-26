@@ -1,4 +1,4 @@
-import { getProducts, saveProducts } from '@/lib/db';
+import { getProducts, saveProducts, deleteRow } from '@/lib/db';
 
 export async function GET() {
     const products = await getProducts();
@@ -62,9 +62,17 @@ export async function PUT(req) {
 
 export async function DELETE(req) {
     try {
-        const { id } = await req.json();
+        const body = await req.json();
+        const id = body?.id ?? body?.productId;
+        if (id == null || id === '') {
+            return new Response(JSON.stringify({ error: 'Product id is required' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
         const products = await getProducts();
-        const filtered = products.filter((p) => String(p.id) !== String(id));
+        const productId = String(id);
+        const filtered = products.filter((p) => String(p.id || p._id) !== productId);
 
         if (filtered.length === products.length) {
             return new Response(JSON.stringify({ error: 'Product not found' }), {
@@ -73,6 +81,7 @@ export async function DELETE(req) {
             });
         }
 
+        await deleteRow('products.json', productId);
         await saveProducts(filtered);
 
         return new Response(JSON.stringify({ success: true }), {

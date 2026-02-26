@@ -43,7 +43,7 @@ export default function AdminProductsPage() {
     const fetchProducts = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/admin/products');
+            const res = await fetch('/api/admin/products', { cache: 'no-store' });
             const data = await res.json();
             setProducts(Array.isArray(data) ? data : []);
         } catch (err) {
@@ -165,14 +165,25 @@ export default function AdminProductsPage() {
     /* ── DELETE ── */
     const handleDeleteConfirm = async () => {
         if (!deleteTarget) return;
+        const id = deleteTarget.id ?? deleteTarget._id;
+        if (id == null) {
+            console.error('Delete error: product has no id');
+            return;
+        }
         setIsDeleting(true);
         try {
             const res = await fetch('/api/admin/products', {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: deleteTarget.id }),
+                body: JSON.stringify({ id }),
             });
-            if (res.ok) { setDeleteTarget(null); fetchProducts(); }
+            if (res.ok) {
+                setDeleteTarget(null);
+                fetchProducts();
+            } else {
+                const errData = await res.json().catch(() => ({}));
+                console.error('Delete error:', errData?.error || res.statusText);
+            }
         } catch (err) { console.error('Delete error:', err); }
         finally { setIsDeleting(false); }
     };
@@ -304,7 +315,7 @@ export default function AdminProductsPage() {
                             ) : products.length === 0 ? (
                                 <tr><td colSpan="6" className="px-6 py-10 text-center text-gray-400 font-medium">No products found.</td></tr>
                             ) : products.map((product) => (
-                                <tr key={product.id} className="hover:bg-gray-50 transition-colors group">
+                                <tr key={product.id || product._id || product.name} className="hover:bg-gray-50 transition-colors group">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-gray-100 rounded-lg overflow-hidden border border-gray-100 shrink-0">

@@ -102,13 +102,41 @@ export default function CartPage() {
                         key={item.id}
                         className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col sm:flex-row gap-4 sm:gap-6 p-4 sm:p-5 hover:shadow-md transition-shadow"
                       >
-                        <div className="w-full sm:w-28 h-40 sm:h-28 shrink-0 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center">
-                          <img
-                            src={item.image || '/Girly.png'}
-                            alt={item.name}
-                            className="w-full h-full object-contain p-2"
-                            onError={(e) => { e.target.src = '/Girly.png'; }}
-                          />
+                        <div className="w-full sm:w-28 shrink-0 flex flex-col gap-2">
+                          <div className="h-40 sm:h-28 bg-gray-50 rounded-xl overflow-hidden flex items-center justify-center">
+                            <img
+                              src={item.image || '/Girly.png'}
+                              alt={item.name}
+                              className="w-full h-full object-contain p-2"
+                              onError={(e) => { e.target.src = '/Girly.png'; }}
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Qty (max {MAX_QUANTITY})</span>
+                            <div className="inline-flex items-center border-2 border-gray-200 rounded-xl bg-gray-50/80 overflow-hidden w-fit">
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateQuantity(item.id, item.quantity || 1, -1)}
+                                disabled={(item.quantity || 1) <= 1}
+                                className="p-2 sm:p-2.5 hover:bg-white transition-colors text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                                aria-label="Decrease quantity"
+                              >
+                                <Minus className="w-4 h-4" />
+                              </button>
+                              <span className="w-8 sm:w-10 text-center font-bold text-gray-900 tabular-nums text-sm">
+                                {item.quantity || 1}
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateQuantity(item.id, item.quantity || 1, 1)}
+                                disabled={(item.quantity || 1) >= MAX_QUANTITY}
+                                className="p-2 sm:p-2.5 hover:bg-white transition-colors text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                                aria-label="Increase quantity"
+                              >
+                                <Plus className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
                         </div>
                         <div className="flex-1 min-w-0 flex flex-col justify-between">
                           <div>
@@ -120,33 +148,6 @@ export default function CartPage() {
                             </p>
                           </div>
                           <div className="flex flex-wrap items-center gap-3">
-                            <div className="flex flex-col gap-1">
-                              <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Qty</span>
-                              <div className="inline-flex items-center border-2 border-gray-200 rounded-xl bg-gray-50/80 overflow-hidden">
-                                <button
-                                  type="button"
-                                  onClick={() => handleUpdateQuantity(item.id, item.quantity || 1, -1)}
-                                  disabled={(item.quantity || 1) <= 1}
-                                  className="p-2.5 sm:p-3 hover:bg-white transition-colors text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
-                                  aria-label="Decrease quantity"
-                                >
-                                  <Minus className="w-4 h-4" />
-                                </button>
-                                <span className="w-10 sm:w-12 text-center font-bold text-gray-900 tabular-nums text-sm sm:text-base">
-                                  {item.quantity || 1}
-                                </span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleUpdateQuantity(item.id, item.quantity || 1, 1)}
-                                  disabled={(item.quantity || 1) >= MAX_QUANTITY}
-                                  className="p-2.5 sm:p-3 hover:bg-white transition-colors text-gray-600 disabled:opacity-40 disabled:cursor-not-allowed"
-                                  aria-label="Increase quantity"
-                                >
-                                  <Plus className="w-4 h-4" />
-                                </button>
-                              </div>
-                              <span className="text-[10px] text-gray-400">Max {MAX_QUANTITY} per item</span>
-                            </div>
                             <button
                               type="button"
                               onClick={() => handleRemoveItem(item.id)}

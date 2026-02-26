@@ -13,7 +13,7 @@ export default function BeADonorPage() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
-    fetch('/api/children')
+    fetch('/api/children', { cache: 'no-store' })
       .then((r) => r.json())
       .then((data) => setChildren(Array.isArray(data) ? data : []))
       .catch(() => setChildren([]))

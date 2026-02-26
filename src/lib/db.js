@@ -45,6 +45,22 @@ function invalidateCached(filename) {
     pendingReads.delete(filename);
 }
 
+/** Delete a single row by id from Supabase (and invalidate cache). Use before saving filtered array so DB stays in sync. */
+export async function deleteRow(filename, id) {
+    invalidateCached(filename);
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        const table = TABLE_MAP[filename];
+        if (table && id != null) {
+            try {
+                const { error } = await supabase.from(table).delete().eq('id', String(id));
+                if (error) throw error;
+            } catch (err) {
+                console.error(`Supabase delete error for ${table}:`, err);
+            }
+        }
+    }
+}
+
 // Supabase helper: Maps JSON filenames to table names
 const TABLE_MAP = {
     'users.json': 'users',
@@ -234,6 +250,13 @@ export async function writeData(filename, data) {
 
                 const { error } = await supabase.from(table).upsert(mappedData);
                 if (error) throw error;
+                // Keep local file in sync so both admin and website see same data and local fallback works
+                try {
+                    const filePath = getFilePath(filename);
+                    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+                } catch (e) {
+                    console.warn(`Local sync write for ${filename}:`, e?.message);
+                }
                 return true;
             } catch (err) {
                 console.error(`Supabase write error for ${table}:`, err);

@@ -17,7 +17,7 @@ export default function AdminDonorRegistrationsPage() {
         if (isRefresh) setRefreshing(true);
         else setLoading(true);
         try {
-            const res = await fetch('/api/donor-registrations');
+            const res = await fetch('/api/donor-registrations', { cache: 'no-store' });
             const data = await res.json();
             setDonations(Array.isArray(data) ? data.slice().reverse() : []);
         } catch (error) {

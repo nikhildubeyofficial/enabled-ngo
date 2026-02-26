@@ -1,4 +1,4 @@
-import { getChildren, saveChildren } from '@/lib/db';
+import { getChildren, saveChildren, deleteRow } from '@/lib/db';
 
 export async function GET() {
     const children = await getChildren();
@@ -55,15 +55,24 @@ export async function PUT(req) {
 
 export async function DELETE(req) {
     try {
-        const { id } = await req.json();
+        const body = await req.json();
+        const id = body?.id ?? body?.childId;
+        if (id == null || id === '') {
+            return new Response(JSON.stringify({ error: 'Child id is required' }), {
+                status: 400,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
         const children = await getChildren();
-        const filtered = children.filter((c) => String(c.id) !== String(id));
+        const childId = String(id);
+        const filtered = children.filter((c) => String(c.id || c._id) !== childId);
         if (filtered.length === children.length) {
             return new Response(JSON.stringify({ error: 'Child not found' }), {
                 status: 404,
                 headers: { 'Content-Type': 'application/json' },
             });
         }
+        await deleteRow('children.json', childId);
         await saveChildren(filtered);
         return new Response(JSON.stringify({ success: true }), {
             status: 200,

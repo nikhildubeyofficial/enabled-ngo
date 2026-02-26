@@ -36,7 +36,7 @@ export default function DonatePage() {
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
-        fetch('/api/children')
+        fetch('/api/children', { cache: 'no-store' })
             .then((r) => r.json())
             .then((data) => {
                 const found = Array.isArray(data)

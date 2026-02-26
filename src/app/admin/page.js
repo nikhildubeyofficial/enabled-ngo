@@ -35,46 +35,54 @@ export default function AdminDashboard() {
     const [trends, setTrends] = useState({ products: null, donations: null, orders: null });
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        async function fetchAll() {
-            try {
-                const [productsRes, donationsRes, ordersRes] = await Promise.all([
-                    fetch('/api/admin/products'),
-                    fetch('/api/donor-registrations'),
-                    fetch('/api/admin/orders'),
-                ]);
+    const fetchAll = async (showLoading = true) => {
+        try {
+            if (showLoading) setLoading(true);
+            const [productsRes, donationsRes, ordersRes] = await Promise.all([
+                fetch('/api/admin/products', { cache: 'no-store' }),
+                fetch('/api/donor-registrations', { cache: 'no-store' }),
+                fetch('/api/admin/orders', { cache: 'no-store' }),
+            ]);
 
-                const [products, donations, orders] = await Promise.all([
-                    productsRes.json(),
-                    donationsRes.json(),
-                    ordersRes.json(),
-                ]);
+            const [products, donations, orders] = await Promise.all([
+                productsRes.json(),
+                donationsRes.json(),
+                ordersRes.json(),
+            ]);
 
-                const productArr = Array.isArray(products) ? products : [];
-                const donationArr = Array.isArray(donations) ? donations : [];
-                const orderArr = Array.isArray(orders) ? orders : [];
+            const productArr = Array.isArray(products) ? products : [];
+            const donationArr = Array.isArray(donations) ? donations : [];
+            const orderArr = Array.isArray(orders) ? orders : [];
 
-                const productsThisMonth = productArr.filter((p) => isThisMonth(p.createdAt || p.createdat)).length;
-                const donationsThisMonth = donationArr.filter((d) => isThisMonth(d.submitted_at)).length;
-                const ordersToday = orderArr.filter((o) => isToday(o.createdAt || o.createdat || o.date)).length;
+            const productsThisMonth = productArr.filter((p) => isThisMonth(p.createdAt || p.createdat)).length;
+            const donationsThisMonth = donationArr.filter((d) => isThisMonth(d.submitted_at)).length;
+            const ordersToday = orderArr.filter((o) => isToday(o.createdAt || o.createdat || o.date)).length;
 
-                setCounts({
-                    products: productArr.length,
-                    donations: donationArr.length,
-                    orders: orderArr.length,
-                });
-                setTrends({
-                    products: productsThisMonth > 0 ? `+${productsThisMonth} this month` : 'No new this month',
-                    donations: donationsThisMonth > 0 ? `+${donationsThisMonth} this month` : 'No new this month',
-                    orders: ordersToday > 0 ? `+${ordersToday} today` : 'None today',
-                });
-            } catch (err) {
-                console.error('Dashboard fetch error:', err);
-            } finally {
-                setLoading(false);
-            }
+            setCounts({
+                products: productArr.length,
+                donations: donationArr.length,
+                orders: orderArr.length,
+            });
+            setTrends({
+                products: productsThisMonth > 0 ? `+${productsThisMonth} this month` : 'No new this month',
+                donations: donationsThisMonth > 0 ? `+${donationsThisMonth} this month` : 'No new this month',
+                orders: ordersToday > 0 ? `+${ordersToday} today` : 'None today',
+            });
+        } catch (err) {
+            console.error('Dashboard fetch error:', err);
+        } finally {
+            setLoading(false);
         }
+    };
+
+    useEffect(() => {
         fetchAll();
+    }, []);
+
+    useEffect(() => {
+        const onFocus = () => fetchAll(false);
+        window.addEventListener('focus', onFocus);
+        return () => window.removeEventListener('focus', onFocus);
     }, []);
 
     const stats = [

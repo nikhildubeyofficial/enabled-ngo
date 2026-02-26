@@ -30,7 +30,7 @@ export default function AdminChildrenPage() {
     const fetchChildren = async () => {
         setLoading(true);
         try {
-            const res = await fetch('/api/admin/children');
+            const res = await fetch('/api/admin/children', { cache: 'no-store' });
             const data = await res.json();
             setChildren(Array.isArray(data) ? data : []);
         } catch (err) { console.error(err); }
