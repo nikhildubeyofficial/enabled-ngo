@@ -291,7 +291,7 @@ export default function DonatePage() {
                                         <input
                                             type="text"
                                             value={form.name}
-                                            onChange={e => setForm({ ...form, name: e.target.value })}
+                                            onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))}
                                             placeholder="Enter your full name"
                                             className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F0312F] focus:border-transparent"
                                         />
@@ -303,7 +303,7 @@ export default function DonatePage() {
                                         <input
                                             type="email"
                                             value={form.email}
-                                            onChange={e => setForm({ ...form, email: e.target.value })}
+                                            onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))}
                                             placeholder="Enter your email"
                                             className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F0312F] focus:border-transparent"
                                         />
@@ -315,7 +315,7 @@ export default function DonatePage() {
                                         <input
                                             type="tel"
                                             value={form.phone}
-                                            onChange={e => setForm({ ...form, phone: e.target.value })}
+                                            onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))}
                                             placeholder="Enter your phone number"
                                             className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#F0312F] focus:border-transparent"
                                         />

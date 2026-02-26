@@ -8,6 +8,13 @@ export const metadata = {
   description: "Indonesia-based community support platform for special needs children's parents and bereaved parents.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  interactiveWidget: "resizes-content",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
