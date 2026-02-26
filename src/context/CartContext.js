@@ -37,7 +37,9 @@ export function CartProvider({ children }) {
             let currentCart = [];
             if (savedCart) {
                 try {
-                    currentCart = JSON.parse(savedCart);
+                    const parsed = JSON.parse(savedCart);
+                    // Filter out any null/undefined or malformed items
+                    currentCart = Array.isArray(parsed) ? parsed.filter(item => item && (item.id || item._id)) : [];
                 } catch (e) {
                     console.error('Failed to parse cart:', e);
                 }
@@ -49,13 +51,16 @@ export function CartProvider({ children }) {
                 if (guestCartStr) {
                     try {
                         const guestCart = JSON.parse(guestCartStr);
-                        if (guestCart.length > 0) {
+                        if (Array.isArray(guestCart) && guestCart.length > 0) {
                             console.log('Merging guest cart into user cart...');
 
                             // Merge logic: append new items, update quantities for existing ones
                             const mergedCart = [...currentCart];
                             guestCart.forEach(guestItem => {
-                                const existingIndex = mergedCart.findIndex(item => item.id === guestItem.id);
+                                // Validate guest item
+                                if (!guestItem || (!guestItem.id && !guestItem._id)) return;
+
+                                const existingIndex = mergedCart.findIndex(item => (item.id === guestItem.id) || (item.id === guestItem._id));
                                 if (existingIndex > -1) {
                                     mergedCart[existingIndex].quantity = (mergedCart[existingIndex].quantity || 1) + (guestItem.quantity || 1);
                                 } else {
